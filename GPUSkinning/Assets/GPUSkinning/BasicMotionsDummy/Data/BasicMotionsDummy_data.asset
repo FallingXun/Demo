@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d55d498ffafd1247894d56c87225cc3, type: 3}
+  m_Name: BasicMotionsDummy_data
+  m_EditorClassIdentifier: 
+  m_Width: 64
+  m_Height: 32
+  m_BoneCount: 53
+  m_SampleFPS: 15
+  m_AnimationTex: {fileID: 2800000, guid: f04a5f586196f98429e28a94ee4d4c61, type: 2}
+  m_ClipData:
+  - m_Name: BasicMotions@Run01 - Forwards
+    m_Start: 0
+    m_Count: 8
+    m_Loop: 1
