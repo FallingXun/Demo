@@ -181,6 +181,7 @@ public class CreateAssets : Editor
         mat.SetInt("_Height", data.m_Height);
         mat.SetInt("_BoneCount", data.m_BoneCount);
         mat.SetTexture("_MainTex", skr.sharedMaterial.mainTexture);
+        mat.enableInstancing = true;
         var dir = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), path));
         if (Directory.Exists(dir) == false)
         {
@@ -208,7 +209,6 @@ public class CreateAssets : Editor
         mf.sharedMesh = mesh;
         var mr = child.AddComponent<MeshRenderer>();
         mr.sharedMaterial = mat;
-        mr.sharedMaterial.enableInstancing = true;
 
         var path = string.Format("Assets/GPUSkinning/{0}/Prefab/{1}_GPU.prefab", go.name, go.name);
         var dir = Path.GetDirectoryName(Path.Combine(Directory.GetCurrentDirectory(), path));
