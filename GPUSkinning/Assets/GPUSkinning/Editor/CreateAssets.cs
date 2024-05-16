@@ -51,6 +51,8 @@ public class CreateAssets : Editor
         mesh.triangles = skr.sharedMesh.triangles;
         mesh.name = go.name + "_mesh";
 
+        // disable mesh read/write
+        mesh.UploadMeshData(true); 
         var path = string.Format("Assets/GPUSkinning/{0}/Mesh/{1}_mesh.asset", go.name, go.name);
         if (File.Exists(path))
         {
