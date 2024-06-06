@@ -7,7 +7,7 @@ using System.IO;
 
 public class MeshGenerator : Editor
 {
-
+    #region StaticBatch
     [MenuItem("GameObject/CreateStaticBatch")]
     public static void CreateStaticBatch()
     {
@@ -113,4 +113,120 @@ public class MeshGenerator : Editor
         }
         return meshList;
     }
+    #endregion
+
+    #region DynamicBatch
+    [MenuItem("GameObject/CreateDynamicBatch")]
+    public static void CreateDynamicBatch()
+    {
+        var meshList = new List<Mesh>();
+        meshList.AddRange(CreateDynamicBatchMesh(true, true, 4));
+        meshList.AddRange(CreateDynamicBatchMesh(true, true, 8));
+        meshList.AddRange(CreateDynamicBatchMesh(false, false, 4));
+        meshList.AddRange(CreateDynamicBatchMesh(false, false, 8));
+
+        var mat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Material/TestMaterial.mat");
+
+        var root = new GameObject("Root");
+        for (int i = 0; i < meshList.Count; i++)
+        {
+            var m = meshList[i];
+            GameObject go = new GameObject(m.name.ToString());
+            go.transform.parent = root.transform;
+            go.transform.localPosition = new Vector3(0, -16 + i * 2, 0);
+            var mf = go.AddComponent<MeshFilter>();
+            var mr = go.AddComponent<MeshRenderer>();
+            mr.sharedMaterial = mat;
+
+            mf.sharedMesh = m;
+        }
+    }
+
+    private static List<Mesh> CreateDynamicBatchMesh(bool color32, bool vector2, int uvCount)
+    {
+        var meshList = new List<Mesh>();
+        var mesh = Selection.activeGameObject.GetComponent<MeshFilter>().sharedMesh;
+        var colors1 = new Color32[mesh.vertexCount];
+        for (int i = 0; i < mesh.vertexCount; i++)
+        {
+            colors1[i] = new Color32(255, 255, 255, 255);
+        }
+        var tangents1 = new Vector4[mesh.vertexCount];
+        for (int i = 0; i < mesh.vertexCount; i++)
+        {
+            tangents1[i] = new Vector4(0, 0, 0, 1);
+        }
+        int count = 30;
+        for (int i = 1; i <= 4; i++)
+        {
+            var m = new Mesh();
+            var vertics = new List<Vector3>(count * 4);
+            var normals = new List<Vector3>(count * 4);
+            var triangles = new List<int>(count * 4 * mesh.vertexCount);
+            var uvs = new List<Vector2>(count * 4);
+            var uvs4 = new List<Vector4>(count * 4);
+            var tangents = new List<Vector4>(count * 4);
+            var colors32 = new List<Color32>(count * 4);
+            var colors = new List<Color>(count * 4);
+            var boneWeight = new List<BoneWeight>(count * 4);
+            for (int j = 0; j < count; j++)
+            {
+                normals.AddRange(mesh.normals);
+                for (int k = 0; k < mesh.vertexCount; k++)
+                {
+                    vertics.Add(mesh.vertices[k]);
+                    uvs.Add(mesh.uv[k]);
+                    uvs4.Add(new Vector4(mesh.uv[k].x, mesh.uv[k].y, mesh.uv[k].x, mesh.uv[k].y));
+                    colors32.Add(colors1[k]);
+                    colors.Add(colors1[k]);
+                    tangents.Add(tangents1[k]);
+                }
+                for (int k = 0; k < mesh.triangles.Length; k++)
+                {
+                    triangles.Add(mesh.triangles[k] + j * mesh.vertexCount);
+                }
+            }
+
+            m.SetVertices(vertics);
+            m.SetNormals(normals);
+            m.SetTangents(tangents);
+            if (color32)
+            {
+                m.colors32 = colors32.ToArray();
+            }
+            else
+            {
+                m.colors = colors.ToArray();
+            }
+            m.SetTriangles(triangles, 0);
+            for (int index = 0; index < uvCount; index++)
+            {
+                if (vector2)
+                {
+                    m.SetUVs(index, uvs);
+                }
+                else
+                {
+                    m.SetUVs(index, uvs4);
+                }
+            }
+
+
+            m.RecalculateBounds();
+
+            var assetPath = string.Format("Assets/Mesh/DynamicBatch/mesh_{0}_{1}_{2}_uv{3}_vertex{4}.asset", i, color32 ? "c32" : "c", vector2 ? "v2" : "v4", uvCount, vertics.Count);
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), assetPath);
+            var dirPath = Path.GetDirectoryName(fullPath);
+            if (Directory.Exists(dirPath) == false)
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+            AssetDatabase.CreateAsset(m, assetPath);
+
+            meshList.Add(m);
+        }
+        return meshList;
+    }
+
+    #endregion
 }
