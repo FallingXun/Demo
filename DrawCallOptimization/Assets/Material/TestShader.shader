@@ -54,19 +54,20 @@ Shader "Unlit/TestShader"
             {
                 v2f o;
 				float s = 1;
+				o.vertex = float4(0, 0, 0, 0);
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				//s *= step(v.vertex.x, 0);
-				//s *= step(v.normal.x, 0);
-				//s *= step(v.tangent.x, 0);
-				//s *= step(v.color.x, 0);
-				//s *= step(v.uv0.x, 0);
-				//s *= step(v.uv1.y, 0);
-				//s *= step(v.uv2.y, 0);
-				//s *= step(v.uv3.y, 0);
-				//s *= step(v.uv4.y, 0);
-				//s *= step(v.uv5.y, 0);
-				//s *= step(v.uv6.y, 0);
-				//s *= step(v.uv7.y, 0);
+				s *= step(v.vertex.x, 0);
+				s *= step(v.normal.x, 0);
+				s *= step(v.tangent.x, 0);
+				s *= step(v.color.x, 0);
+				s *= step(v.uv0.x, 0);
+				s *= step(v.uv1.y, 0);
+				s *= step(v.uv2.y, 0);
+				s *= step(v.uv3.y, 0);
+				s *= step(v.uv4.y, 0);
+				s *= step(v.uv5.y, 0);
+				s *= step(v.uv6.y, 0);
+				s *= step(v.uv7.y, 0);
 				o.color = float4(0.1, 0.1, 0.1, 1) * s;
 
                 return o;
